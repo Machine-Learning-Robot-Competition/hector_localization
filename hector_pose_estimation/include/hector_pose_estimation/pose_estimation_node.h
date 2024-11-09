@@ -81,7 +81,7 @@ protected:
 #endif
 
   void magneticCallback(const geometry_msgs::Vector3StampedConstPtr& magnetic);
-  void gpsCallback(const sensor_msgs::NavSatFixConstPtr& gps, const geometry_msgs::Vector3StampedConstPtr& gps_velocity);
+  void gpsCallback(const geometry_msgs::Vector3StampedConstPtr& gps, const geometry_msgs::Vector3StampedConstPtr& gps_velocity);
   void poseupdateCallback(const geometry_msgs::PoseWithCovarianceStampedConstPtr& pose);
   void twistupdateCallback(const geometry_msgs::TwistWithCovarianceStampedConstPtr& twist);
   void syscommandCallback(const std_msgs::StringConstPtr& syscommand);
@@ -103,9 +103,9 @@ protected:
   ros::NodeHandle private_nh_;
 
   ros::Subscriber imu_subscriber_, height_subscriber_, magnetic_subscriber_, ahrs_subscriber_, rollpitch_subscriber_;
-  message_filters::Subscriber<sensor_msgs::NavSatFix> gps_subscriber_;
+  message_filters::Subscriber<geometry_msgs::Vector3Stamped> gps_subscriber_;
   message_filters::Subscriber<geometry_msgs::Vector3Stamped> gps_velocity_subscriber_;
-  message_filters::TimeSynchronizer<sensor_msgs::NavSatFix,geometry_msgs::Vector3Stamped> *gps_synchronizer_;
+  message_filters::TimeSynchronizer<geometry_msgs::Vector3Stamped,geometry_msgs::Vector3Stamped> *gps_synchronizer_;
   ros::Publisher state_publisher_, pose_publisher_, velocity_publisher_, imu_publisher_, geopose_publisher_, global_fix_publisher_, euler_publisher_;
   ros::Publisher angular_velocity_bias_publisher_, linear_acceleration_bias_publisher_, gps_pose_publisher_, sensor_pose_publisher_;
   ros::Subscriber poseupdate_subscriber_, twistupdate_subscriber_;

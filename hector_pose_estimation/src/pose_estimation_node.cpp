@@ -99,15 +99,15 @@ bool PoseEstimationNode::init() {
   ahrs_subscriber_       = getNodeHandle().subscribe("ahrs", 10, &PoseEstimationNode::ahrsCallback, this);
   rollpitch_subscriber_  = getNodeHandle().subscribe("rollpitch", 10, &PoseEstimationNode::rollpitchCallback, this);
 #if defined(USE_HECTOR_UAV_MSGS)
-  baro_subscriber_       = getNodeHandle().subscribe("altimeter", 10, &PoseEstimationNode::baroCallback, this);
+//   baro_subscriber_       = getNodeHandle().subscribe("altimeter", 10, &PoseEstimationNode::baroCallback, this);
 #else
   height_subscriber_     = getNodeHandle().subscribe("pressure_height", 10, &PoseEstimationNode::heightCallback, this);
 #endif
   magnetic_subscriber_   = getNodeHandle().subscribe("magnetic", 10, &PoseEstimationNode::magneticCallback, this);
 
-  gps_subscriber_.subscribe(getNodeHandle(), "fix", 10);
+  gps_subscriber_.subscribe(getNodeHandle(), "fix_velocity", 10);
   gps_velocity_subscriber_.subscribe(getNodeHandle(), "fix_velocity", 10);
-  gps_synchronizer_ = new message_filters::TimeSynchronizer<sensor_msgs::NavSatFix,geometry_msgs::Vector3Stamped>(gps_subscriber_, gps_velocity_subscriber_, 10);
+  gps_synchronizer_ = new message_filters::TimeSynchronizer<geometry_msgs::Vector3Stamped,geometry_msgs::Vector3Stamped>(gps_subscriber_, gps_velocity_subscriber_, 10);
   gps_synchronizer_->registerCallback(&PoseEstimationNode::gpsCallback, this);
 
   state_publisher_       = getNodeHandle().advertise<nav_msgs::Odometry>("state", 10, false);
@@ -231,17 +231,17 @@ void PoseEstimationNode::magneticCallback(const geometry_msgs::Vector3StampedCon
   }
 }
 
-void PoseEstimationNode::gpsCallback(const sensor_msgs::NavSatFixConstPtr& gps, const geometry_msgs::Vector3StampedConstPtr& gps_velocity) {
+void PoseEstimationNode::gpsCallback(const geometry_msgs::Vector3StampedConstPtr& gps, const geometry_msgs::Vector3StampedConstPtr& gps_velocity) {
   boost::shared_ptr<GPS> m = boost::static_pointer_cast<GPS>(pose_estimation_->getMeasurement("gps"));
 
-  if (gps->status.status == sensor_msgs::NavSatStatus::STATUS_NO_FIX) {
-    if (m->getStatusFlags() > 0) m->reset(pose_estimation_->state());
-    return;
-  }
+//   if (gps->status.status == sensor_msgs::NavSatStatus::STATUS_NO_FIX) {
+//     if (m->getStatusFlags() > 0) m->reset(pose_estimation_->state());
+//     return;
+//   }
 
   GPS::Update update;
-  update.latitude = gps->latitude * M_PI/180.0;
-  update.longitude = gps->longitude * M_PI/180.0;
+  update.latitude = 0.0;
+  update.longitude = 0.0;
   update.velocity_north =  gps_velocity->vector.x;
   update.velocity_east  = -gps_velocity->vector.y;
   m->add(update);
@@ -253,9 +253,9 @@ void PoseEstimationNode::gpsCallback(const sensor_msgs::NavSatFixConstPtr& gps, 
     GPSModel::MeasurementVector y = m->getVector(update, pose_estimation_->state());
 
     if (gps_pose_publisher_) {
-      gps_pose.pose.position.x = y(0);
-      gps_pose.pose.position.y = y(1);
-      gps_pose.pose.position.z = gps->altitude - pose_estimation_->globalReference()->position().altitude;
+      gps_pose.pose.position.x = 3.14;
+      gps_pose.pose.position.y = 2.71;
+      gps_pose.pose.position.z = 6.63;
       double track = atan2(gps_velocity->vector.y, gps_velocity->vector.x);
       gps_pose.pose.orientation.w = cos(track/2);
       gps_pose.pose.orientation.z = sin(track/2);
