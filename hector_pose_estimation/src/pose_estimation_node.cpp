@@ -99,7 +99,7 @@ bool PoseEstimationNode::init() {
   ahrs_subscriber_       = getNodeHandle().subscribe("ahrs", 10, &PoseEstimationNode::ahrsCallback, this);
   rollpitch_subscriber_  = getNodeHandle().subscribe("rollpitch", 10, &PoseEstimationNode::rollpitchCallback, this);
 #if defined(USE_HECTOR_UAV_MSGS)
-//   baro_subscriber_       = getNodeHandle().subscribe("altimeter", 10, &PoseEstimationNode::baroCallback, this);
+  baro_subscriber_       = getNodeHandle().subscribe("altimeter", 10, &PoseEstimationNode::baroCallback, this);
 #else
   height_subscriber_     = getNodeHandle().subscribe("pressure_height", 10, &PoseEstimationNode::heightCallback, this);
 #endif
