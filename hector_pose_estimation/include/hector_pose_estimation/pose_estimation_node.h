@@ -130,6 +130,8 @@ protected:
 
   geometry_msgs::PoseStamped sensor_pose_;
   double sensor_pose_roll_, sensor_pose_pitch_, sensor_pose_yaw_;
+
+  geometry_msgs::Vector3Stamped stored_gps_velocity;
 };
 
 } // namespace hector_pose_estimation

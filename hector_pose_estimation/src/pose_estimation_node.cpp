@@ -238,6 +238,9 @@ void PoseEstimationNode::gpsCallback(const geometry_msgs::Vector3StampedConstPtr
 //     if (m->getStatusFlags() > 0) m->reset(pose_estimation_->state());
 //     return;
 //   }
+  
+  stored_gps_velocity.vector = gps_velocity->vector;
+  stored_gps_velocity.header = gps_velocity->header;
 
   GPS::Update update;
   update.latitude = 0.0;
@@ -321,6 +324,10 @@ void PoseEstimationNode::publish() {
   if (state_publisher_ && state_publisher_.getNumSubscribers() > 0) {
     nav_msgs::Odometry state;
     pose_estimation_->getState(state, publish_covariances_);
+
+    // Get GPS velocity
+    state.twist.twist.linear.z = stored_gps_velocity.vector.z;
+
     state_publisher_.publish(state);
   }
 
