@@ -99,9 +99,9 @@ bool PoseEstimationNode::init() {
   ahrs_subscriber_       = getNodeHandle().subscribe("ahrs", 10, &PoseEstimationNode::ahrsCallback, this);
   rollpitch_subscriber_  = getNodeHandle().subscribe("rollpitch", 10, &PoseEstimationNode::rollpitchCallback, this);
 #if defined(USE_HECTOR_UAV_MSGS)
-  baro_subscriber_       = getNodeHandle().subscribe("altimeter", 10, &PoseEstimationNode::baroCallback, this);
+  baro_subscriber_       = getNodeHandle().subscribe("fix_velocity", 10, &PoseEstimationNode::baroCallback, this);
 #else
-  height_subscriber_     = getNodeHandle().subscribe("pressure_height", 10, &PoseEstimationNode::heightCallback, this);
+  height_subscriber_     = getNodeHandle().subscribe("fix_velocity", 10, &PoseEstimationNode::heightCallback, this);
 #endif
   magnetic_subscriber_   = getNodeHandle().subscribe("magnetic", 10, &PoseEstimationNode::magneticCallback, this);
 
@@ -198,21 +198,21 @@ void PoseEstimationNode::rollpitchCallback(const sensor_msgs::ImuConstPtr& attit
 }
 
 #if defined(USE_HECTOR_UAV_MSGS)
-void PoseEstimationNode::baroCallback(const hector_uav_msgs::AltimeterConstPtr& altimeter) {
+void PoseEstimationNode::baroCallback(const geometry_msgs::Vector3StampedConstPtr& altimeter) {
   boost::shared_ptr<Baro> m = boost::static_pointer_cast<Baro>(pose_estimation_->getMeasurement("baro"));
-  m->add(Baro::Update(altimeter->pressure, altimeter->qnh));
+  m->add(Baro::Update(1.0, 1.0));
 }
 
 #else
-void PoseEstimationNode::heightCallback(const geometry_msgs::PointStampedConstPtr& height) {
+void PoseEstimationNode::heightCallback(const geometry_msgs::Vector3StampedConstPtr& height) {
   boost::shared_ptr<Height> m = boost::static_pointer_cast<Height>(pose_estimation_->getMeasurement("height"));
 
   Height::MeasurementVector update;
-  update(0) = height->point.z;
+  update(0) = 1.0;
   m->add(Height::Update(update));
 
   if (sensor_pose_publisher_) {
-    sensor_pose_.pose.position.z = height->point.z - m->getElevation();
+    sensor_pose_.pose.position.z = 1.0 - m->getElevation();
   }
 }
 #endif

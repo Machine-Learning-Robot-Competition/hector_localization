@@ -75,9 +75,9 @@ protected:
 #if defined(USE_MAV_MSGS)
   void heightCallback(const mav_msgs::HeightConstPtr& height);
 #elif defined(USE_HECTOR_UAV_MSGS)
-  void baroCallback(const hector_uav_msgs::AltimeterConstPtr& altimeter);
+  void baroCallback(const geometry_msgs::Vector3StampedConstPtr& altimeter);
 #else
-  void heightCallback(const geometry_msgs::PointStampedConstPtr& height);
+  void heightCallback(const geometry_msgs::Vector3StampedConstPtr& height);
 #endif
 
   void magneticCallback(const geometry_msgs::Vector3StampedConstPtr& magnetic);
