@@ -98,11 +98,11 @@ bool PoseEstimationNode::init() {
   imu_subscriber_        = getNodeHandle().subscribe("raw_imu", 10, &PoseEstimationNode::imuCallback, this);
   ahrs_subscriber_       = getNodeHandle().subscribe("ahrs", 10, &PoseEstimationNode::ahrsCallback, this);
   rollpitch_subscriber_  = getNodeHandle().subscribe("rollpitch", 10, &PoseEstimationNode::rollpitchCallback, this);
-#if defined(USE_HECTOR_UAV_MSGS)
-  baro_subscriber_       = getNodeHandle().subscribe("altimeter", 10, &PoseEstimationNode::baroCallback, this);
-#else
-  height_subscriber_     = getNodeHandle().subscribe("pressure_height", 10, &PoseEstimationNode::heightCallback, this);
-#endif
+// #if defined(USE_HECTOR_UAV_MSGS)
+//   baro_subscriber_       = getNodeHandle().subscribe("altimeter", 10, &PoseEstimationNode::baroCallback, this);
+// #else
+//   height_subscriber_     = getNodeHandle().subscribe("pressure_height", 10, &PoseEstimationNode::heightCallback, this);
+// #endif
   magnetic_subscriber_   = getNodeHandle().subscribe("magnetic", 10, &PoseEstimationNode::magneticCallback, this);
 
   gps_subscriber_.subscribe(getNodeHandle(), "fix_velocity", 10);
